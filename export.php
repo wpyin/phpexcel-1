@@ -15,10 +15,24 @@ $objPHPExcel = new PHPExcel();
 $date = date("Y_m_d",time());
 $fileName = "{$date}.xlsx";
 
+//数据库连接导入数据库里面
+ $link = mysqli_connect('localhost','root','','test');
+ mysqli_set_charset($link,"utf8");//不写这句话的话会造成乱码
+ if(!$link){
+	 echo "数据库连接失败"; 
+	 exit;
+ }
+ $sql = "SELECT * from kebiao";
+ $wp= mysqli_query($link,$sql);
+ //$row = mysqli_fetch_array($wp);
+ while($row = mysqli_fetch_assoc($wp)) {
+        $arr[]=$row;;
+    }
+// var_dump($arr);die;
 //测试数据，正常会从数据库中获取
-$data = array(
-  0 => array('id'=>2012,'name'=>'胡','age' => 25)
-);
+//$data = array(
+  //0 => array('id'=>2012,'name'=>'胡','age' => 25)
+//);
 
 //Excel文件的说明信息
 $objPHPExcel->getProperties()->setCreator("Maarten Balliauw")
@@ -30,18 +44,22 @@ $objPHPExcel->getProperties()->setCreator("Maarten Balliauw")
 							 ->setCategory("Test result file");
 
 //设置表格内容，具体内容根据A1这种具体位置来确定							 
-$objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A1','编号')
-            ->setCellValue('B1','姓名')
-            ->setCellValue('C1','年龄');
+//$objPHPExcel->setActiveSheetIndex(0)
+ //           ->setCellValue('A1','编号')
+//            ->setCellValue('B1','姓名')
+ //           ->setCellValue('C1','年龄');
 
 //适合把表中数据导入Excel文件中，多数据循环设置值			
-foreach($data as $key=> $value) {
+foreach($arr as $key=> $value) {
 	$key+=2;
 	$objPHPExcel->setActiveSheetIndex(0)
 	            ->setCellValue('A'.$key,$value['id'])
-	            ->setCellValue('B'.$key,$value['name'])
-	            ->setCellValue('C'.$key,$value['age']);
+	            ->setCellValue('B'.$key,$value['danwei'])
+	            ->setCellValue('C'.$key,$value['daima'])
+	            ->setCellValue('D'.$key,$value['mingcheng'])
+	            ->setCellValue('E'.$key,$value['banhao'])
+	            ->setCellValue('F'.$key,$value['gonghao'])
+	            ->setCellValue('G'.$key,$value['name']);
 }
 
 // 重命名表
